@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+@keyframes sb-float {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 0.4;
+  }
+
+  100% {
+    transform: translateY(-110vh) translateX(15px);
+    opacity: 0;
+  }
+}
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
