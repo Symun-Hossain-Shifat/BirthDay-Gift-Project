@@ -38,20 +38,33 @@ const PHOTOS = [
 const MESSAGE = [
   {
     text:
-      "সত্যি বলতে birthday wish করার জন্য অনেক কিছু লিখতে চেয়েছিলাম, কিন্তু শেষ পর্যন্ত কী লিখব সেটাই বুঝতে পারছিলাম না। 😅",
+      "সত্যি বলতে তোমাকে birthday wish করার জন্য অনেক কিছু লিখতে চেয়েছিলাম। কিন্তু যতবারই লিখতে বসেছি, ততবারই মনে হয়েছে—কিছু মানুষকে নিয়ে মনের কথাগুলো আসলে ঠিকভাবে লিখে প্রকাশ করা যায় না। 😅❤️",
   },
   {
     text:
-      "শুধু একটা কথাই বলি, সবসময় ভালো থেকো, হাসিখুশি থেকো আর তোমার যেসব ইচ্ছে আছে সেগুলো এক এক করে পূরণ হোক। জীবনে যত কঠিন সময়ই আসুক, তুমি যেন সেগুলো পার করে নিজের মতো করে ভালো থাকতে পারো।",
+      "তবুও আজ তোমার এই special দিনটায় একটা কথাই মন থেকে বলতে চাই—সবসময় ভালো থেকো, হাসিখুশি থেকো। তোমার ছোট-বড় সব ইচ্ছে এক এক করে পূরণ হোক, আর জীবনে যত কঠিন সময়ই আসুক না কেন, তুমি যেন সবকিছু পেরিয়ে নিজের মতো করে সুন্দর একটা জীবন কাটাতে পারো।",
   },
   {
     text:
-      "আর একটা কথা... তুমি আমার জীবনে আসার পর থেকে অনেক কিছুই হয়তো আগের মতো নেই, কিছু জিনিস একটু বেশি সুন্দর হয়ে গেছে। ❤️",
+      "আর একটা কথা... তুমি আমার জীবনে আসার পর থেকে হয়তো সবকিছু বদলে যায়নি, কিন্তু কিছু কিছু জিনিস সত্যিই আগের চেয়ে একটু বেশি সুন্দর হয়ে গেছে। কিছু মুহূর্ত, কিছু হাসি, কিছু কথা—এসবের মাঝে তোমার একটা আলাদা জায়গা তৈরি হয়ে গেছে। ❤️",
   },
   {
     text:
-      "আজকে তোমার দিন, তাই বেশি কিছু বলব না। শুধু চাই, আজকে অনেক হাসো, অনেক enjoy করো আর নিজের এই special দিনটা সুন্দর করে কাটাও।",
+      "তোমার সাথে কাটানো প্রতিটা সুন্দর মুহূর্ত হয়তো সবসময় বলে বোঝানো সম্ভব না, কিন্তু সত্যি বলতে এগুলোর অনেকগুলোই আমার কাছে ভীষণ special। আর তুমি যেমন আছো, ঠিক তেমনই থেকো—নিজের স্বপ্নের পেছনে ছুটে, নিজের মতো করে হাসতে হাসতে।",
   },
+  {
+    text:
+      "আজকে পুরো দিনটা শুধু তোমার। তাই আজ কোনো দুঃখ, কোনো overthinking, কোনো মন খারাপ না—শুধু হাসবে, enjoy করবে আর নিজের special দিনটা নিজের মতো করে সুন্দর করে কাটাবে। 🥰",
+  },
+  {
+    text:
+      "শেষে শুধু এটুকুই বলব—Happy Birthday, Sristy. 🎂❤️ তোমার নতুন বছরটা তোমার জীবনের সবচেয়ে সুন্দর বছরগুলোর একটা হোক। তোমার মুখের হাসিটা সবসময় এমনই থাকুক, আর তোমার জীবনে এমন অনেক কারণ আসুক যেগুলোর জন্য প্রতিদিন হাসতে ইচ্ছে করবে।",
+  },
+  {
+    text:
+      "আর হ্যাঁ... আজকের দিনটা special, কারণ আজকের দিনেই তুমি পৃথিবীতে এসেছিলে। আর কোনো একভাবে, তোমার আসাটা আমার জীবনকেও একটু সুন্দর করে দিয়েছে। ❤️",
+  },
+
   { text: "Happy Birthday once again! 🫶", emphasis: true },
   { text: "ভালো থেকো, পাগলি। ❤️", emphasis: true },
 ];
@@ -64,61 +77,61 @@ export default function SristyBirthdayPage() {
   const [showFinale, setShowFinale] = useState(false);
 
   const stars = [
-  { id: 0, top: 12, left: 20, size: 2, delay: 1, duration: 3 },
-  { id: 1, top: 25, left: 65, size: 3, delay: 2, duration: 4 },
-  { id: 2, top: 40, left: 35, size: 1.5, delay: 0.5, duration: 3 },
-  { id: 3, top: 55, left: 80, size: 2, delay: 3, duration: 5 },
-  { id: 4, top: 70, left: 15, size: 3, delay: 1.5, duration: 4 },
-  { id: 5, top: 85, left: 50, size: 2, delay: 2.5, duration: 3 },
-  { id: 6, top: 30, left: 90, size: 1.5, delay: 0, duration: 5 },
-  { id: 7, top: 60, left: 60, size: 2.5, delay: 3, duration: 4 },
-  { id: 8, top: 8, left: 45, size: 2, delay: 1, duration: 3 },
-  { id: 9, top: 92, left: 75, size: 1.5, delay: 2, duration: 5 },
-  { id: 10, top: 18, left: 78, size: 2.5, delay: 0.5, duration: 4 },
-  { id: 11, top: 48, left: 8, size: 2, delay: 3, duration: 3 },
-  { id: 12, top: 75, left: 92, size: 3, delay: 1.5, duration: 5 },
-  { id: 13, top: 35, left: 52, size: 1.5, delay: 2.5, duration: 4 },
-  { id: 14, top: 65, left: 42, size: 2, delay: 0, duration: 3 },
-];
- const hearts = [
-  { id: 0, left: 10, size: 14, duration: 12, delay: 1 },
-  { id: 1, left: 22, size: 18, duration: 14, delay: 3 },
-  { id: 2, left: 35, size: 12, duration: 11, delay: 2 },
-  { id: 3, left: 48, size: 20, duration: 15, delay: 4 },
-  { id: 4, left: 60, size: 15, duration: 13, delay: 1 },
-  { id: 5, left: 72, size: 22, duration: 12, delay: 5 },
-  { id: 6, left: 82, size: 13, duration: 14, delay: 2 },
-  { id: 7, left: 90, size: 19, duration: 11, delay: 4 },
-  { id: 8, left: 30, size: 16, duration: 13, delay: 6 },
-  { id: 9, left: 55, size: 21, duration: 15, delay: 2 },
-  { id: 10, left: 68, size: 12, duration: 10, delay: 5 },
-  { id: 11, left: 95, size: 17, duration: 14, delay: 1 },
-];
+    { id: 0, top: 12, left: 20, size: 2, delay: 1, duration: 3 },
+    { id: 1, top: 25, left: 65, size: 3, delay: 2, duration: 4 },
+    { id: 2, top: 40, left: 35, size: 1.5, delay: 0.5, duration: 3 },
+    { id: 3, top: 55, left: 80, size: 2, delay: 3, duration: 5 },
+    { id: 4, top: 70, left: 15, size: 3, delay: 1.5, duration: 4 },
+    { id: 5, top: 85, left: 50, size: 2, delay: 2.5, duration: 3 },
+    { id: 6, top: 30, left: 90, size: 1.5, delay: 0, duration: 5 },
+    { id: 7, top: 60, left: 60, size: 2.5, delay: 3, duration: 4 },
+    { id: 8, top: 8, left: 45, size: 2, delay: 1, duration: 3 },
+    { id: 9, top: 92, left: 75, size: 1.5, delay: 2, duration: 5 },
+    { id: 10, top: 18, left: 78, size: 2.5, delay: 0.5, duration: 4 },
+    { id: 11, top: 48, left: 8, size: 2, delay: 3, duration: 3 },
+    { id: 12, top: 75, left: 92, size: 3, delay: 1.5, duration: 5 },
+    { id: 13, top: 35, left: 52, size: 1.5, delay: 2.5, duration: 4 },
+    { id: 14, top: 65, left: 42, size: 2, delay: 0, duration: 3 },
+  ];
+  const hearts = [
+    { id: 0, left: 10, size: 14, duration: 12, delay: 1 },
+    { id: 1, left: 22, size: 18, duration: 14, delay: 3 },
+    { id: 2, left: 35, size: 12, duration: 11, delay: 2 },
+    { id: 3, left: 48, size: 20, duration: 15, delay: 4 },
+    { id: 4, left: 60, size: 15, duration: 13, delay: 1 },
+    { id: 5, left: 72, size: 22, duration: 12, delay: 5 },
+    { id: 6, left: 82, size: 13, duration: 14, delay: 2 },
+    { id: 7, left: 90, size: 19, duration: 11, delay: 4 },
+    { id: 8, left: 30, size: 16, duration: 13, delay: 6 },
+    { id: 9, left: 55, size: 21, duration: 15, delay: 2 },
+    { id: 10, left: 68, size: 12, duration: 10, delay: 5 },
+    { id: 11, left: 95, size: 17, duration: 14, delay: 1 },
+  ];
 
   // one-time burst when the envelope opens
- const openBurst = Array.from({ length: 24 }, (_, i) => ({
-  id: i,
-  angle: (i / 24) * Math.PI * 2,
-  distance: 90 + (i % 7) * 10,
-  icon: i % 3 === 0 ? "✨" : "♥",
-  size: 12 + (i % 5) * 2,
-}));
+  const openBurst = Array.from({ length: 24 }, (_, i) => ({
+    id: i,
+    angle: (i / 24) * Math.PI * 2,
+    distance: 90 + (i % 7) * 10,
+    icon: i % 3 === 0 ? "✨" : "♥",
+    size: 12 + (i % 5) * 2,
+  }));
 
   // finale heart rain
   const finaleHearts = [
-  { id: 0, left: 5, size: 18, delay: 0.1, duration: 2.5 },
-  { id: 1, left: 12, size: 24, delay: 0.3, duration: 3 },
-  { id: 2, left: 20, size: 16, delay: 0.5, duration: 2.7 },
-  { id: 3, left: 28, size: 22, delay: 0.2, duration: 3.2 },
-  { id: 4, left: 36, size: 19, delay: 0.6, duration: 2.4 },
-  { id: 5, left: 44, size: 26, delay: 0.1, duration: 2.9 },
-  { id: 6, left: 52, size: 17, delay: 0.4, duration: 3.1 },
-  { id: 7, left: 60, size: 23, delay: 0.7, duration: 2.6 },
-  { id: 8, left: 68, size: 20, delay: 0.2, duration: 3 },
-  { id: 9, left: 76, size: 27, delay: 0.5, duration: 2.8 },
-  { id: 10, left: 84, size: 18, delay: 0.3, duration: 3.2 },
-  { id: 11, left: 92, size: 24, delay: 0.6, duration: 2.5 },
-];
+    { id: 0, left: 5, size: 18, delay: 0.1, duration: 2.5 },
+    { id: 1, left: 12, size: 24, delay: 0.3, duration: 3 },
+    { id: 2, left: 20, size: 16, delay: 0.5, duration: 2.7 },
+    { id: 3, left: 28, size: 22, delay: 0.2, duration: 3.2 },
+    { id: 4, left: 36, size: 19, delay: 0.6, duration: 2.4 },
+    { id: 5, left: 44, size: 26, delay: 0.1, duration: 2.9 },
+    { id: 6, left: 52, size: 17, delay: 0.4, duration: 3.1 },
+    { id: 7, left: 60, size: 23, delay: 0.7, duration: 2.6 },
+    { id: 8, left: 68, size: 20, delay: 0.2, duration: 3 },
+    { id: 9, left: 76, size: 27, delay: 0.5, duration: 2.8 },
+    { id: 10, left: 84, size: 18, delay: 0.3, duration: 3.2 },
+    { id: 11, left: 92, size: 24, delay: 0.6, duration: 2.5 },
+  ];
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-[#0F0824] via-[#241338] to-[#3B1A44] flex items-center justify-center px-4 py-12">
       {/* aurora glow blobs, slowly drifting */}
@@ -406,7 +419,7 @@ export default function SristyBirthdayPage() {
         )}
       </AnimatePresence>
 
-     
+
     </div>
   );
 }
