@@ -7,11 +7,11 @@
   }
 
   12% {
-    opacity: 0.4;
+    opacity: 0.5;
   }
 
   100% {
-    transform: translateY(-110vh) translateX(15px);
+    transform: translateY(-110vh) translateX(25px);
     opacity: 0;
   }
 }
@@ -38,27 +38,73 @@
   }
 }
 
+@keyframes sb-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(255, 111, 145, 0.4), inset 0 0 15px rgba(255, 111, 145, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(255, 111, 145, 0.8), inset 0 0 25px rgba(255, 111, 145, 0.5);
+  }
+}
+
+@keyframes sb-stamp {
+  0% {
+    transform: scale(3) rotate(-15deg);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(0.9) rotate(-15deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(-12deg);
+    opacity: 1;
+  }
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0F0824;
+  --foreground: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-hind-siliguri), sans-serif;
+  --font-cursive: var(--font-great-vibes), cursive;
+  --font-outfit: var(--font-outfit), sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #0F0824;
+  color: #ffffff;
+  font-family: var(--font-hind-siliguri), 'Hind Siliguri', sans-serif;
+  overflow-x: hidden;
 }
+
+/* 3D Card Flip utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.animate-stamp {
+  animation: sb-stamp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.pulse-glow {
+  animation: sb-pulse-glow 2.5s infinite ease-in-out;
+}
+

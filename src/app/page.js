@@ -1,39 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Imageone from './assets/Image.jpeg'
-import Imagetwo from './assets/second.jpeg'
+import Imageone from "./assets/Image.jpeg";
+import Imagetwo from "./assets/second.jpeg";
 import Image from "next/image";
 
+import AudioController, { useAudio } from "./components/SoundEffects";
+import ConfettiCanvas from "./components/ConfettiCanvas";
+import LoveJarModal from "./components/LoveJarModal";
+import LoveCoupons from "./components/LoveCoupons";
 
 const NAME = "Sristy";
 const BIRTH_DATE = "৩১ আগস্ট"; // 31 August
-
-function placeholderPhoto(bg1, bg2, emoji) {
-  return (
-    "data:image/svg+xml;utf8," +
-    encodeURIComponent(`
-      <svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'>
-        <defs>
-          <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-            <stop offset='0%' stop-color='${bg1}'/>
-            <stop offset='100%' stop-color='${bg2}'/>
-          </linearGradient>
-        </defs>
-        <rect width='400' height='400' fill='url(%23g)'/>
-        <text x='50%' y='53%' font-size='90' text-anchor='middle' dominant-baseline='middle'>${emoji}</text>
-      </svg>
-    `)
-  );
-}
-
-// Three photo slots — swap `src` with a real path once you have one, e.g. "/sristy-1.jpg"
-const PHOTOS = [
-  { src: null, fallback: placeholderPhoto("%23FFD6E0", "%23FF9AAE", "💗"), rotate: -6, z: 30, size: "w-48" },
-  { src: null, fallback: placeholderPhoto("%23FFE1B3", "%23FFC1E3", "🥰"), rotate: 10, z: 20, size: "w-28" },
-  { src: null, fallback: placeholderPhoto("%23C9A7FF", "%23FF9AAE", "💕"), rotate: -14, z: 10, size: "w-28" },
-];
 
 const MESSAGE = [
   {
@@ -75,40 +54,53 @@ export default function SristyBirthdayPage() {
   const [opened, setOpened] = useState(false);
   const [candleOut, setCandleOut] = useState(false);
   const [showFinale, setShowFinale] = useState(false);
+  const [confettiBurst, setConfettiBurst] = useState(0);
+  const [cardFlipped, setCardFlipped] = useState([false, false]);
+  const [isMicListening, setIsMicListening] = useState(false);
+  const [micActive, setMicActive] = useState(false);
 
-  const stars = [
-    { id: 0, top: 12, left: 20, size: 2, delay: 1, duration: 3 },
-    { id: 1, top: 25, left: 65, size: 3, delay: 2, duration: 4 },
-    { id: 2, top: 40, left: 35, size: 1.5, delay: 0.5, duration: 3 },
-    { id: 3, top: 55, left: 80, size: 2, delay: 3, duration: 5 },
-    { id: 4, top: 70, left: 15, size: 3, delay: 1.5, duration: 4 },
-    { id: 5, top: 85, left: 50, size: 2, delay: 2.5, duration: 3 },
-    { id: 6, top: 30, left: 90, size: 1.5, delay: 0, duration: 5 },
-    { id: 7, top: 60, left: 60, size: 2.5, delay: 3, duration: 4 },
-    { id: 8, top: 8, left: 45, size: 2, delay: 1, duration: 3 },
-    { id: 9, top: 92, left: 75, size: 1.5, delay: 2, duration: 5 },
-    { id: 10, top: 18, left: 78, size: 2.5, delay: 0.5, duration: 4 },
-    { id: 11, top: 48, left: 8, size: 2, delay: 3, duration: 3 },
-    { id: 12, top: 75, left: 92, size: 3, delay: 1.5, duration: 5 },
-    { id: 13, top: 35, left: 52, size: 1.5, delay: 2.5, duration: 4 },
-    { id: 14, top: 65, left: 42, size: 2, delay: 0, duration: 3 },
-  ];
-  const hearts = [
-    { id: 0, left: 10, size: 14, duration: 12, delay: 1 },
-    { id: 1, left: 22, size: 18, duration: 14, delay: 3 },
-    { id: 2, left: 35, size: 12, duration: 11, delay: 2 },
-    { id: 3, left: 48, size: 20, duration: 15, delay: 4 },
-    { id: 4, left: 60, size: 15, duration: 13, delay: 1 },
-    { id: 5, left: 72, size: 22, duration: 12, delay: 5 },
-    { id: 6, left: 82, size: 13, duration: 14, delay: 2 },
-    { id: 7, left: 90, size: 19, duration: 11, delay: 4 },
-    { id: 8, left: 30, size: 16, duration: 13, delay: 6 },
-    { id: 9, left: 55, size: 21, duration: 15, delay: 2 },
-    { id: 10, left: 68, size: 12, duration: 10, delay: 5 },
-    { id: 11, left: 95, size: 17, duration: 14, delay: 1 },
-  ];
+  const { isPlaying, toggleMusic, startMusic, playChime, playBlowSound, playFanfare } = useAudio();
 
-  // one-time burst when the envelope opens
+  // Background stars
+  const stars = useMemo(
+    () => [
+      { id: 0, top: 12, left: 20, size: 2, delay: 1, duration: 3 },
+      { id: 1, top: 25, left: 65, size: 3, delay: 2, duration: 4 },
+      { id: 2, top: 40, left: 35, size: 1.5, delay: 0.5, duration: 3 },
+      { id: 3, top: 55, left: 80, size: 2, delay: 3, duration: 5 },
+      { id: 4, top: 70, left: 15, size: 3, delay: 1.5, duration: 4 },
+      { id: 5, top: 85, left: 50, size: 2, delay: 2.5, duration: 3 },
+      { id: 6, top: 30, left: 90, size: 1.5, delay: 0, duration: 5 },
+      { id: 7, top: 60, left: 60, size: 2.5, delay: 3, duration: 4 },
+      { id: 8, top: 8, left: 45, size: 2, delay: 1, duration: 3 },
+      { id: 9, top: 92, left: 75, size: 1.5, delay: 2, duration: 5 },
+      { id: 10, top: 18, left: 78, size: 2.5, delay: 0.5, duration: 4 },
+      { id: 11, top: 48, left: 8, size: 2, delay: 3, duration: 3 },
+      { id: 12, top: 75, left: 92, size: 3, delay: 1.5, duration: 5 },
+      { id: 13, top: 35, left: 52, size: 1.5, delay: 2.5, duration: 4 },
+      { id: 14, top: 65, left: 42, size: 2, delay: 0, duration: 3 },
+    ],
+    []
+  );
+
+  const hearts = useMemo(
+    () => [
+      { id: 0, left: 10, size: 14, duration: 12, delay: 1 },
+      { id: 1, left: 22, size: 18, duration: 14, delay: 3 },
+      { id: 2, left: 35, size: 12, duration: 11, delay: 2 },
+      { id: 3, left: 48, size: 20, duration: 15, delay: 4 },
+      { id: 4, left: 60, size: 15, duration: 13, delay: 1 },
+      { id: 5, left: 72, size: 22, duration: 12, delay: 5 },
+      { id: 6, left: 82, size: 13, duration: 14, delay: 2 },
+      { id: 7, left: 90, size: 19, duration: 11, delay: 4 },
+      { id: 8, left: 30, size: 16, duration: 13, delay: 6 },
+      { id: 9, left: 55, size: 21, duration: 15, delay: 2 },
+      { id: 10, left: 68, size: 12, duration: 10, delay: 5 },
+      { id: 11, left: 95, size: 17, duration: 14, delay: 1 },
+    ],
+    []
+  );
+
   const openBurst = Array.from({ length: 24 }, (_, i) => ({
     id: i,
     angle: (i / 24) * Math.PI * 2,
@@ -117,7 +109,6 @@ export default function SristyBirthdayPage() {
     size: 12 + (i % 5) * 2,
   }));
 
-  // finale heart rain
   const finaleHearts = [
     { id: 0, left: 5, size: 18, delay: 0.1, duration: 2.5 },
     { id: 1, left: 12, size: 24, delay: 0.3, duration: 3 },
@@ -132,16 +123,97 @@ export default function SristyBirthdayPage() {
     { id: 10, left: 84, size: 18, delay: 0.3, duration: 3.2 },
     { id: 11, left: 92, size: 24, delay: 0.6, duration: 2.5 },
   ];
+
+  // Handle Envelope Open
+  const handleOpenEnvelope = () => {
+    setOpened(true);
+    startMusic();
+    playChime();
+    setConfettiBurst((prev) => prev + 1);
+  };
+
+  // Candle Extinguish Handler
+  const handleBlowCandle = () => {
+    if (candleOut) return;
+    setCandleOut(true);
+    playBlowSound();
+    setConfettiBurst((prev) => prev + 1);
+  };
+
+  // Microphone Blow Detection
+  const startMicDetection = async () => {
+    try {
+      setMicActive(true);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const analyser = audioCtx.createAnalyser();
+      const microphone = audioCtx.createMediaStreamSource(stream);
+      const javascriptNode = audioCtx.createScriptProcessor(2048, 1, 1);
+
+      analyser.smoothingTimeConstant = 0.8;
+      analyser.fftSize = 1024;
+
+      microphone.connect(analyser);
+      analyser.connect(javascriptNode);
+      javascriptNode.connect(audioCtx.destination);
+
+      javascriptNode.onaudioprocess = () => {
+        const array = new Uint8Array(analyser.frequencyBinCount);
+        analyser.getByteFrequencyData(array);
+        let values = 0;
+
+        for (let i = 0; i < array.length; i++) {
+          values += array[i];
+        }
+
+        const average = values / array.length;
+        if (average > 45 && !candleOut) {
+          handleBlowCandle();
+          stream.getTracks().forEach((track) => track.stop());
+          audioCtx.close();
+          setMicActive(false);
+        }
+      };
+      setIsMicListening(true);
+    } catch (err) {
+      console.warn("Microphone access denied or unsupported", err);
+      setMicActive(false);
+    }
+  };
+
+  // Flip Photo Cards
+  const toggleFlip = (index) => {
+    playChime();
+    setCardFlipped((prev) => {
+      const next = [...prev];
+      next[index] = !next[index];
+      return next;
+    });
+  };
+
+  // Trigger Finale
+  const handleShowFinale = () => {
+    setShowFinale(true);
+    playFanfare();
+    setConfettiBurst((prev) => prev + 2);
+  };
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-b from-[#0F0824] via-[#241338] to-[#3B1A44] flex items-center justify-center px-4 py-12">
-      {/* aurora glow blobs, slowly drifting */}
+      {/* Audio Controller Floating Button */}
+      <AudioController isPlaying={isPlaying} toggleMusic={toggleMusic} />
+
+      {/* Confetti & Particle Canvas */}
+      <ConfettiCanvas triggerBurst={confettiBurst} />
+
+      {/* Aurora glow blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute w-[500px] h-[500px] -top-32 -left-24 rounded-full bg-[#FF6F91]/20 blur-[100px] animate-[sb-aurora1_14s_ease-in-out_infinite]" />
         <div className="absolute w-[420px] h-[420px] top-1/3 -right-24 rounded-full bg-[#8A5CF6]/20 blur-[100px] animate-[sb-aurora2_16s_ease-in-out_infinite]" />
         <div className="absolute w-[380px] h-[380px] bottom-0 left-1/4 rounded-full bg-[#FFC15E]/10 blur-[110px] animate-[sb-aurora1_18s_ease-in-out_infinite]" />
       </div>
 
-      {/* twinkling starfield */}
+      {/* Twinkling starfield */}
       <div className="pointer-events-none absolute inset-0">
         {stars.map((s) => (
           <motion.span
@@ -154,7 +226,7 @@ export default function SristyBirthdayPage() {
         ))}
       </div>
 
-      {/* drifting hearts */}
+      {/* Drifting hearts */}
       <div className="pointer-events-none absolute inset-0">
         {hearts.map((h) => (
           <span
@@ -178,9 +250,9 @@ export default function SristyBirthdayPage() {
             /* ---------------- CLOSED: sealed envelope ---------------- */
             <motion.button
               key="envelope"
-              onClick={() => setOpened(true)}
+              onClick={handleOpenEnvelope}
               exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.35 } }}
-              className="group relative mx-auto flex flex-col items-center gap-6 outline-none"
+              className="group relative mx-auto flex flex-col items-center gap-6 outline-none cursor-pointer"
               aria-label="খুলে দেখো তোমার জন্য কী আছে"
             >
               {/* orbiting sparkles */}
@@ -195,36 +267,36 @@ export default function SristyBirthdayPage() {
               </motion.div>
 
               <motion.div
-                animate={{ y: [0, -6, 0] }}
+                animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
-                className="relative w-64 h-44"
+                className="relative w-64 h-44 pulse-glow rounded-xl"
               >
-                <div className="absolute inset-0 rounded-md bg-gradient-to-b from-[#F3E8FF] to-[#E4D0F5] shadow-[0_25px_60px_-15px_rgba(255,111,145,0.35)]" />
+                <div className="absolute inset-0 rounded-md bg-gradient-to-b from-[#F3E8FF] to-[#E4D0F5] shadow-[0_25px_60px_-15px_rgba(255,111,145,0.45)]" />
                 <div
                   className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-[#D9BEEE] to-[#C7A6E3]"
                   style={{ clipPath: "polygon(0 0, 100% 0, 50% 85%)" }}
                 />
                 <motion.div
-                  animate={{ scale: [1, 1.1, 1] }}
+                  animate={{ scale: [1, 1.15, 1] }}
                   transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-[38%] left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-[#FF6F91] to-[#B33F5C] shadow-[0_0_25px_rgba(255,111,145,0.7)] flex items-center justify-center text-white text-lg"
+                  className="absolute top-[38%] left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-[#FF6F91] to-[#B33F5C] shadow-[0_0_25px_rgba(255,111,145,0.8)] flex items-center justify-center text-white text-lg"
                 >
                   ❤
                 </motion.div>
               </motion.div>
 
-              <span className="font-['Hind_Siliguri',sans-serif] text-[#F3E8FF] text-sm tracking-wide bg-white/10 border border-white/20 px-5 py-2 rounded-full backdrop-blur-sm group-active:scale-95 transition-transform">
+              <span className="font-['Hind_Siliguri',sans-serif] text-[#F3E8FF] text-sm font-semibold tracking-wide bg-white/10 border border-white/20 px-6 py-2.5 rounded-full backdrop-blur-md group-hover:bg-white/20 group-active:scale-95 transition-all shadow-lg">
                 সীলটা খুলে দেখো 💌
               </span>
             </motion.button>
           ) : (
-            /* ---------------- OPENED: the letter ---------------- */
+            /* ---------------- OPENED: the letter & interactive surprises ---------------- */
             <motion.div
               key="letter"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="relative rounded-2xl bg-[#FFF8F0] shadow-[0_30px_80px_-15px_rgba(255,111,145,0.35)] px-6 py-8 sm:px-9 sm:py-10"
+              className="relative rounded-3xl bg-[#FFF8F0] shadow-[0_30px_80px_-15px_rgba(255,111,145,0.4)] px-6 py-8 sm:px-9 sm:py-10"
             >
               {/* one-time open burst */}
               <div className="pointer-events-none absolute top-10 left-1/2">
@@ -257,52 +329,76 @@ export default function SristyBirthdayPage() {
                 Happy Birthday {NAME} ❤️
               </motion.h1>
 
-              {/* photo stack */}
+              {/* Interactive Polaroid Flip Stack */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
-                className="relative mx-auto mt-8 h-56 w-full flex items-center justify-center"
+                className="relative mx-auto mt-8 h-64 w-full flex items-center justify-center"
               >
-                {/* soft heart glow behind the stack */}
                 <div className="pointer-events-none absolute w-52 h-52 rounded-full bg-[#FF6F91]/25 blur-3xl" />
 
-                {PHOTOS.slice(1).map((p, i) => (
-                  <div
-                    key={i}
-                    className={`absolute ${p.size} bg-white p-2 pb-5 shadow-xl`}
-                    style={{
-                      transform: `rotate(${p.rotate}deg) translateX(${i === 0 ? -70 : 70}px)`,
-                      zIndex: p.z,
-                    }}
+                {/* Photo 1 (Imageone) */}
+                <div
+                  onClick={() => toggleFlip(0)}
+                  className="absolute w-44 perspective-1000 cursor-pointer -translate-x-12 -rotate-6 z-20 hover:scale-105 transition-transform"
+                >
+                  <motion.div
+                    animate={{ rotateY: cardFlipped[0] ? 180 : 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="relative w-full aspect-[4/5] transform-style-3d bg-white p-2.5 pb-6 shadow-2xl rounded-sm border border-pink-100"
                   >
-                    <div className="w-full aspect-square overflow-hidden bg-[#FFE1E9]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                    {/* Front */}
+                    <div className="w-full h-full backface-hidden overflow-hidden bg-[#FFE1E9]">
                       <Image src={Imageone} alt={NAME} className="w-full h-full object-cover" />
                     </div>
-                  </div>
-                ))}
+                    {/* Back */}
+                    <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#FFF5F7] p-4 flex flex-col items-center justify-center text-center">
+                      <span className="text-xl">🌸</span>
+                      <p className="font-['Hind_Siliguri',sans-serif] text-xs font-semibold text-[#8A2E45] mt-1">
+                        "তোমার হাসিটাই আমার দেখা শ্রেষ্ঠ দৃশ্য!"
+                      </p>
+                      <span className="mt-2 text-[10px] text-pink-400 font-bold uppercase">
+                        (Tap to flip back)
+                      </span>
+                    </div>
+                  </motion.div>
+                </div>
 
+                {/* Photo 2 (Imagetwo) */}
                 <div
-                  className={`absolute ${PHOTOS[0].size} bg-white p-3 pb-6 shadow-2xl`}
-                  style={{ transform: `rotate(${PHOTOS[0].rotate}deg)`, zIndex: PHOTOS[0].z }}
+                  onClick={() => toggleFlip(1)}
+                  className="absolute w-44 perspective-1000 cursor-pointer translate-x-12 rotate-6 z-30 hover:scale-105 transition-transform"
                 >
-                  <div className="w-full aspect-square overflow-hidden bg-[#FFE1E9]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <Image
-                      src={Imagetwo}
-                      alt={NAME}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <p className="mt-2 text-center font-['Hind_Siliguri',sans-serif] text-xs text-[#8A2E45]">
-                    {BIRTH_DATE} 🎂
-                  </p>
+                  <motion.div
+                    animate={{ rotateY: cardFlipped[1] ? 180 : 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="relative w-full aspect-[4/5] transform-style-3d bg-white p-2.5 pb-6 shadow-2xl rounded-sm border border-pink-100"
+                  >
+                    {/* Front */}
+                    <div className="w-full h-full backface-hidden overflow-hidden bg-[#FFE1E9]">
+                      <Image src={Imagetwo} alt={NAME} className="w-full h-full object-cover" />
+                    </div>
+                    {/* Back */}
+                    <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#FFF5F7] p-4 flex flex-col items-center justify-center text-center">
+                      <span className="text-xl">👑</span>
+                      <p className="font-['Hind_Siliguri',sans-serif] text-xs font-semibold text-[#8A2E45] mt-1">
+                        "{BIRTH_DATE} — তোমার বিশেষ দিনে অনেক ভালোবাসা!"
+                      </p>
+                      <span className="mt-2 text-[10px] text-pink-400 font-bold uppercase">
+                        (Tap to flip back)
+                      </span>
+                    </div>
+                  </motion.div>
                 </div>
               </motion.div>
 
-              {/* message, line by line with blur-in + heart bullet */}
-              <div className="mt-10 space-y-5">
+              <p className="text-center font-['Hind_Siliguri',sans-serif] text-xs text-[#8A2E45]/70 -mt-2">
+                (ছবিগুলোতে ট্যাপ করে উল্টে দেখো 👆✨)
+              </p>
+
+              {/* Message lines */}
+              <div className="mt-8 space-y-5">
                 {MESSAGE.map((line, i) => (
                   <motion.div
                     key={i}
@@ -317,7 +413,7 @@ export default function SristyBirthdayPage() {
                     <p
                       className={
                         line.emphasis
-                          ? "font-['Hind_Siliguri',sans-serif] text-xl font-semibold text-[#B33F5C]"
+                          ? "font-['Hind_Siliguri',sans-serif] text-xl font-bold text-[#B33F5C]"
                           : "font-['Hind_Siliguri',sans-serif] text-[#4A2438] text-[15px] leading-relaxed"
                       }
                     >
@@ -327,49 +423,71 @@ export default function SristyBirthdayPage() {
                 ))}
               </div>
 
-              {/* candle-blow interaction */}
+              {/* Interactive Candle Blow with Microphone & Touch */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: MESSAGE_END_DELAY + 0.2 }}
-                className="mt-8 flex flex-col items-center gap-2"
+                className="mt-10 flex flex-col items-center gap-3 bg-pink-50/70 p-5 rounded-2xl border border-pink-200/60 shadow-inner"
               >
                 <button
-                  onClick={() => setCandleOut(true)}
-                  className="relative flex flex-col items-center outline-none active:scale-95 transition-transform"
+                  onClick={handleBlowCandle}
+                  className="relative flex flex-col items-center outline-none active:scale-95 transition-transform cursor-pointer"
                   aria-label="মোমবাতি নিভিয়ে একটা ইচ্ছে করো"
                 >
                   <AnimatePresence>
                     {!candleOut && (
-                      <motion.span
-                        exit={{ opacity: 0, y: -6 }}
-                        animate={{ opacity: [1, 0.5, 1], scale: [1, 1.15, 1] }}
-                        transition={{ duration: 1, repeat: Infinity }}
-                        className="text-lg mb-[-6px]"
-                      >
-                        🔥
-                      </motion.span>
+                      <motion.div className="flex flex-col items-center mb-[-6px]">
+                        <motion.span
+                          exit={{ opacity: 0, y: -12, scale: 0.5 }}
+                          animate={{ opacity: [1, 0.6, 1], scale: [1, 1.2, 1] }}
+                          transition={{ duration: 0.8, repeat: Infinity }}
+                          className="text-2xl filter drop-shadow-[0_0_10px_rgba(255,165,0,0.8)]"
+                        >
+                          🔥
+                        </motion.span>
+                      </motion.div>
                     )}
                   </AnimatePresence>
-                  <span className="text-4xl">🎂</span>
+                  <span className="text-5xl">🎂</span>
                 </button>
-                <span className="font-['Hind_Siliguri',sans-serif] text-xs text-[#8A2E45]/70">
-                  {candleOut ? "ইচ্ছেটা পূরণ হোক ✨" : "মোমবাতিতে ট্যাপ করে ইচ্ছে করো"}
-                </span>
+
+                <div className="flex flex-col items-center gap-1.5 text-center">
+                  <span className="font-['Hind_Siliguri',sans-serif] text-sm font-semibold text-[#8A2E45]">
+                    {candleOut ? "ইচ্ছেটা পূরণ হোক ✨" : "মোমবাতিতে ট্যাপ করে বা ফু দিয়ে ইচ্ছে করো!"}
+                  </span>
+
+                  {!candleOut && (
+                    <button
+                      onClick={startMicDetection}
+                      disabled={micActive || isMicListening}
+                      className="mt-1 flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1 text-xs font-medium text-pink-600 shadow-sm border border-pink-200 hover:bg-pink-100 transition-colors"
+                    >
+                      <span>🎙️</span>
+                      <span>{isMicListening ? "মাইক সক্রিয়! স্ক্রিনে ফু দাও 💨" : "মাইকে ফু দিয়ে নিভাও"}</span>
+                    </button>
+                  )}
+                </div>
               </motion.div>
+
+              {/* Surprise 1: Secret Love Jar Modal */}
+              <LoveJarModal playChime={playChime} />
+
+              {/* Surprise 2: Redeemable Love Coupons */}
+              <LoveCoupons onClaim={() => setConfettiBurst((prev) => prev + 1)} playChime={playChime} />
 
               {/* final CTA */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: MESSAGE_END_DELAY + 0.6 }}
-                className="mt-8 flex justify-center"
+                className="mt-10 flex justify-center"
               >
                 <button
-                  onClick={() => setShowFinale(true)}
-                  className="font-['Hind_Siliguri',sans-serif] text-sm text-white bg-gradient-to-r from-[#FF6F91] to-[#B33F5C] px-6 py-2.5 rounded-full shadow-[0_10px_25px_-8px_rgba(179,63,92,0.6)] active:scale-95 transition-transform"
+                  onClick={handleShowFinale}
+                  className="font-['Hind_Siliguri',sans-serif] text-base font-bold text-white bg-gradient-to-r from-[#FF6F91] to-[#B33F5C] px-8 py-3 rounded-full shadow-[0_10px_25px_-5px_rgba(179,63,92,0.6)] active:scale-95 hover:scale-105 transition-all flex items-center gap-2 cursor-pointer"
                 >
-                  ❤️ একটা hug পাঠাও
+                  <span>❤️ একটা Hug পাঠাও</span>
                 </button>
               </motion.div>
             </motion.div>
@@ -385,7 +503,7 @@ export default function SristyBirthdayPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setShowFinale(false)}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F0824]/90 backdrop-blur-sm px-6 cursor-pointer"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F0824]/95 backdrop-blur-md px-6 cursor-pointer"
           >
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
               {finaleHearts.map((h) => (
@@ -406,20 +524,22 @@ export default function SristyBirthdayPage() {
               initial={{ scale: 0.6, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 14, delay: 0.15 }}
-              className="relative text-center"
+              className="relative text-center max-w-sm bg-white/10 p-8 rounded-3xl border border-white/20 backdrop-blur-lg shadow-2xl"
             >
+              <div className="text-6xl mb-4 animate-bounce">🤗❤️</div>
               <p className="font-['Great_Vibes',cursive] text-4xl sm:text-5xl text-[#FFD6E0] drop-shadow-[0_0_25px_rgba(255,111,145,0.6)]">
-                তোমাকে অনেক ভালোবাসি 🥰
+                তোমাকে অনেক ভালোবাসি Sristy 🥰
               </p>
-              <p className="mt-4 font-['Hind_Siliguri',sans-serif] text-sm text-white/70">
-                (আবার শুরু করতে যেকোনো জায়গায় ট্যাপ করো)
+              <p className="mt-4 font-['Hind_Siliguri',sans-serif] text-sm text-white/80 leading-relaxed">
+                তুমি সবসময় এমন হাসিখুশি থেকো! হ্যাপি বার্থডে মাই লাভ! 🎂🎉
+              </p>
+              <p className="mt-6 font-['Hind_Siliguri',sans-serif] text-xs text-pink-300/60">
+                (বন্ধ করতে যেকোনো জায়গায় ট্যাপ করো)
               </p>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-
     </div>
   );
 }
