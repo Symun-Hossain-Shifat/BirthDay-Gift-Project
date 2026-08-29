@@ -10,6 +10,7 @@ import AudioController, { useAudio } from "./components/SoundEffects";
 import ConfettiCanvas from "./components/ConfettiCanvas";
 import LoveJarModal from "./components/LoveJarModal";
 import LoveCoupons from "./components/LoveCoupons";
+import SongItem from "./components/SongItem";
 
 const NAME = "Sristy";
 const BIRTH_DATE = "৩১ আগস্ট"; // 31 August
@@ -59,7 +60,7 @@ export default function SristyBirthdayPage() {
   const [isMicListening, setIsMicListening] = useState(false);
   const [micActive, setMicActive] = useState(false);
 
-  const { isPlaying, toggleMusic, startMusic, playChime, playBlowSound, playFanfare } = useAudio();
+  const { isPlaying, toggleMusic, startMusic, stopMusic, playChime, playBlowSound, playFanfare } = useAudio();
 
   // Background stars
   const stars = useMemo(
@@ -475,6 +476,9 @@ export default function SristyBirthdayPage() {
 
               {/* Surprise 2: Redeemable Love Coupons */}
               <LoveCoupons onClaim={() => setConfettiBurst((prev) => prev + 1)} playChime={playChime} />
+
+              {/* Surprise 3: Special YouTube Song Player */}
+              <SongItem onPlay={stopMusic} playChime={playChime} />
 
               {/* final CTA */}
               <motion.div

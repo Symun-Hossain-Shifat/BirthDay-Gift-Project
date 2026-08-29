@@ -36,10 +36,10 @@ export default function LoveCoupons({ onClaim, playChime }) {
 
   return (
     <div className="mt-10 w-full">
-      <h2 className="text-center font-['Hind_Siliguri',sans-serif] text-lg font-bold text-[#FFD6E0] mb-4 flex items-center justify-center gap-2">
+      <h2 className="text-center font-['Hind_Siliguri',sans-serif] text-lg font-bold text-red-500 mb-4 flex items-center justify-center gap-2">
         <span>🎟️</span> তোমার জন্মদিনের স্পেশাল কুপন <span>🎟️</span>
       </h2>
-      <p className="text-center text-xs text-pink-200/70 mb-6">
+      <p className="text-center text-xs text-red-600 mb-6">
         (নিচের কুপনগুলো তোমার জন্য রিডিম করার জন্য তৈরি! ট্যাপ করে ক্লেইম করে নাও)
       </p>
 
@@ -60,14 +60,14 @@ export default function LoveCoupons({ onClaim, playChime }) {
                   <span className="text-xs font-bold uppercase tracking-wider text-pink-400">
                     {coupon.tag}
                   </span>
-                  <span className="text-xs font-semibold text-pink-200/60">
+                  <span className="text-xs font-semibold text-pink-500">
                     FOR SRISTY ONLY
                   </span>
                 </div>
-                <h3 className="mt-1 font-['Hind_Siliguri',sans-serif] text-base font-bold text-white">
+                <h3 className="mt-1 font-['Hind_Siliguri',sans-serif] text-base font-bold text-black">
                   {coupon.title}
                 </h3>
-                <p className="mt-1 text-xs text-pink-100/80 leading-relaxed font-['Hind_Siliguri',sans-serif]">
+                <p className="mt-1 text-xs text-purple-500 leading-relaxed font-['Hind_Siliguri',sans-serif]">
                   {coupon.desc}
                 </p>
               </div>

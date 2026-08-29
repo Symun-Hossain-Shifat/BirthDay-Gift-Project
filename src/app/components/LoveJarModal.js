@@ -76,7 +76,7 @@ export default function LoveJarModal({ playChime }) {
             {revealedCount}/{LOVE_NOTES.length}
           </span>
         </div>
-        <span className="mt-3 font-['Hind_Siliguri',sans-serif] text-sm font-medium text-pink-100 group-hover:text-white transition-colors">
+        <span className="mt-3 font-['Hind_Siliguri',sans-serif] text-sm font-medium text-pink-500 group-hover:text-red-500 transition-colors">
           গোপন চিরকুটের বয়াম 💌 (খুলে দেখো)
         </span>
       </button>
